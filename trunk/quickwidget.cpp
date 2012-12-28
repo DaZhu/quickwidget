@@ -115,9 +115,11 @@ bool QuickWidget::event(QEvent* event)
       case QEvent::Resize:
         if (window_)
         {
-          window_->resize(static_cast<QResizeEvent*>(event)->size());
+          QSize size(static_cast<QResizeEvent*>(event)->size());
 
-          window_->setPosition(width(), height());
+          window_->resize(size);
+
+          window_->setPosition(size.width(), size.height());
         }
         // else do nothing
         break;
