@@ -3,9 +3,9 @@
 
 #include <QOpenGLFramebufferObject>
 
-#include <QScopedPointer>
-
 #include <QQuickWindow>
+
+#include <QScopedPointer>
 
 #include <QWidget>
 
