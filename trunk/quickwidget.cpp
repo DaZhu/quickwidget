@@ -150,7 +150,7 @@ bool QuickWidget::eventFilter(QObject*, QEvent* event)
 
       resize(size);
 
-      window_->setPosition(width(), height());
+      window_->setPosition(size.width(), size.height());
 
       window_->removeEventFilter(this);
       break;
@@ -166,7 +166,7 @@ bool QuickWidget::eventFilter(QObject*, QEvent* event)
 //////////////////////////////////////////////////////////////////////////////
 void QuickWidget::afterRendering()
 {
-  if (windowHandle()->isExposed() && window_)
+  if (window_ && windowHandle()->isExposed())
   {
     #ifdef QT_OPENGL_ES
     static GLint const fmt(GL_BGRA_EXT);
