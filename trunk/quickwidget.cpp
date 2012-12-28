@@ -51,8 +51,6 @@ void QuickWidget::setWindow(QQuickWindow* window)
 
     window->setOpacity(.0);
 
-    window->setPosition(width(), height());
-
     if (window->size().isEmpty())
     {
       window->installEventFilter(this);
@@ -61,6 +59,8 @@ void QuickWidget::setWindow(QQuickWindow* window)
     {
       resize(window->size());
     }
+
+    window->setPosition(width(), height());
 
     connect(window, SIGNAL(afterRendering()), SLOT(afterRendering()),
       Qt::DirectConnection);
