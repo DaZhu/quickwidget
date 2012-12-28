@@ -22,13 +22,14 @@ public:
   QQuickWindow* window() const;
   void setWindow(QQuickWindow*);
 
-private:
+protected:
   void init();
 
   bool event(QEvent*);
 
   bool eventFilter(QObject*, QEvent*);
 
+private:
   void paintEvent(QPaintEvent*);
 
 private:

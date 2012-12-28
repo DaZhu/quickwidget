@@ -21,19 +21,6 @@ QuickWidget::QuickWidget(QQuickWindow* window, QWidget* parent)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void QuickWidget::init()
-{
-  window_ = 0;
-
-  setAttribute(Qt::WA_NativeWindow);
-  setAttribute(Qt::WA_TranslucentBackground);
-
-  setWindowFlags(Qt::FramelessWindowHint);
-
-  setMouseTracking(true);
-}
-
-//////////////////////////////////////////////////////////////////////////////
 void QuickWidget::setWindow(QQuickWindow* window)
 {
   if (window_)
@@ -71,6 +58,19 @@ void QuickWidget::setWindow(QQuickWindow* window)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void QuickWidget::init()
+{
+  window_ = 0;
+
+  setAttribute(Qt::WA_NativeWindow);
+  setAttribute(Qt::WA_TranslucentBackground);
+
+  setWindowFlags(Qt::FramelessWindowHint);
+
+  setMouseTracking(true);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 bool QuickWidget::event(QEvent* event)
 {
   if (window_)
@@ -93,15 +93,13 @@ bool QuickWidget::event(QEvent* event)
       case QEvent::MouseButtonDblClick:
       case QEvent::MouseMove:
       {
-        qreal centerY(qreal(height()) / 2);
-
         QPointF localPos(static_cast<QMouseEvent*>(event)->localPos());
 
-        localPos.setY(2 * centerY - localPos.y());
+        localPos.setY(height() - localPos.y());
 
         QPointF windowPos(static_cast<QMouseEvent*>(event)->windowPos());
 
-        windowPos.setY(2 * centerY - windowPos.y());
+        windowPos.setY(height() - windowPos.y());
 
         QMouseEvent mouseEvent(event->type(), localPos, windowPos,
           static_cast<QMouseEvent*>(event)->button(),
