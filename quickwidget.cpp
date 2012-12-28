@@ -1,0 +1,205 @@
+#include <QBackingStore>
+
+#include <QCoreApplication>
+
+#include "quickwidget.hpp"
+
+//////////////////////////////////////////////////////////////////////////////
+QuickWidget::QuickWidget(QWidget* parent)
+  : QWidget(parent)
+{
+  init();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+QuickWidget::QuickWidget(QQuickWindow* window, QWidget* parent)
+  : QWidget(parent)
+{
+  init();
+
+  setWindow(window);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void QuickWidget::init()
+{
+  window_ = 0;
+
+  setAttribute(Qt::WA_NativeWindow);
+  setAttribute(Qt::WA_TranslucentBackground);
+
+  setWindowFlags(Qt::FramelessWindowHint);
+
+  setMouseTracking(true);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void QuickWidget::setWindow(QQuickWindow* window)
+{
+  if (window_)
+  {
+    window_->removeEventFilter(this);
+
+    disconnect(0, 0, this, 0);
+  }
+  // else do nothing
+
+  if ((window_ = window))
+  {
+    Q_ASSERT(windowHandle());
+    window->setParent(windowHandle());
+
+    window->setOpacity(.0);
+
+    window->setPosition(width(), height());
+
+    if (window->size().isEmpty())
+    {
+      window->installEventFilter(this);
+    }
+    else
+    {
+      resize(window->size());
+    }
+
+    connect(window, SIGNAL(afterRendering()), SLOT(afterRendering()),
+      Qt::DirectConnection);
+    connect(window, SIGNAL(beforeRendering()), SLOT(beforeRendering()),
+      Qt::DirectConnection);
+  }
+  // else do nothing
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool QuickWidget::event(QEvent* event)
+{
+  if (window_)
+  {
+    switch (event->type())
+    {
+      case QEvent::FocusIn:
+      case QEvent::FocusOut:
+      case QEvent::FocusAboutToChange:
+
+      case QEvent::KeyPress:
+      case QEvent::KeyRelease:
+
+      case QEvent::Wheel:
+        QCoreApplication::sendEvent(window_, event);
+        return true;
+
+      case QEvent::MouseButtonPress:
+      case QEvent::MouseButtonRelease:
+      case QEvent::MouseButtonDblClick:
+      case QEvent::MouseMove:
+      {
+        qreal centerY(qreal(height()) / 2);
+
+        QPointF localPos(static_cast<QMouseEvent*>(event)->localPos());
+
+        localPos.setY(2 * centerY - localPos.y());
+
+        QPointF windowPos(static_cast<QMouseEvent*>(event)->windowPos());
+
+        windowPos.setY(2 * centerY - windowPos.y());
+
+        QMouseEvent mouseEvent(event->type(), localPos, windowPos,
+          static_cast<QMouseEvent*>(event)->button(),
+          static_cast<QMouseEvent*>(event)->buttons(),
+          static_cast<QMouseEvent*>(event)->modifiers());
+
+        QCoreApplication::sendEvent(window_, &mouseEvent);
+        return true;
+      }
+
+      case QEvent::Resize:
+        if (window_)
+        {
+          window_->resize(static_cast<QResizeEvent*>(event)->size());
+
+          window_->setPosition(width(), height());
+        }
+        // else do nothing
+        break;
+
+      case QEvent::Show:
+        if (window_)
+        {
+          window_->show();
+        }
+        // else do nothing
+
+      default:
+        break;
+    }
+  }
+
+  return QWidget::event(event);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool QuickWidget::eventFilter(QObject*, QEvent* event)
+{
+  Q_ASSERT(window_);
+
+  switch (event->type())
+  {
+    case QEvent::Resize:
+    {
+      QSize size(static_cast<QResizeEvent*>(event)->size());
+
+      resize(size);
+
+      window_->setPosition(width(), height());
+
+      window_->removeEventFilter(this);
+      break;
+    }
+
+    default:
+      break;
+  }
+
+  return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void QuickWidget::afterRendering()
+{
+  if (windowHandle()->isExposed() && window_)
+  {
+    #ifdef QT_OPENGL_ES
+    static GLint const fmt(GL_BGRA_EXT);
+    #else
+    static GLint const fmt(GL_BGRA);
+    #endif
+
+    fbo_->bind();
+
+    glReadPixels(0, 0, width(), height(), fmt, GL_UNSIGNED_BYTE,
+      static_cast<QImage*>(backingStore()->paintDevice())->bits());
+
+/*
+    glBindTexture(GL_TEXTURE_2D, fbo_->texture());
+
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_BGRA, GL_UNSIGNED_BYTE,
+      static_cast<QImage*>(backingStore()->paintDevice())->bits());
+*/
+
+    backingStore()->flush(rect());
+  }
+  // else do nothing
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void QuickWidget::beforeRendering()
+{
+  if (!fbo_)
+  {
+    fbo_.reset(new QOpenGLFramebufferObject(size(),
+      QOpenGLFramebufferObject::NoAttachment));
+
+    window_->setRenderTarget(fbo_.data());
+  }
+  // else do nothing
+}
