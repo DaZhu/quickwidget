@@ -1,9 +1,5 @@
 #include <qapplication.h>
 
-#include <QtGui>
-
-#include <QtQml>
-
 #include <QtQuick>
 
 #include "quickwidget.hpp"
