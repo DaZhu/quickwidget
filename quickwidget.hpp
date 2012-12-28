@@ -1,5 +1,5 @@
 #ifndef QUICKWIDGET_HPP
-#define QUICKWIDGET_HPP
+# define QUICKWIDGET_HPP
 
 #include <QOpenGLFramebufferObject>
 
