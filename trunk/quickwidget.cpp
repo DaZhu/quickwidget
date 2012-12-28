@@ -40,7 +40,7 @@ void QuickWidget::setWindow(QQuickWindow* window)
   {
     window_->removeEventFilter(this);
 
-    disconnect(0, 0, this, 0);
+    disconnect(window_, 0, this, 0);
   }
   // else do nothing
 
