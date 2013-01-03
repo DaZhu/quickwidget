@@ -167,11 +167,13 @@ void QuickWidget::afterRendering()
 {
   if (window_ && windowHandle()->isExposed())
   {
-    #ifdef QT_OPENGL_ES
+#   ifdef QT_OPENGL_ES
     static GLint const fmt(GL_BGRA_EXT);
-    #else
+#   else
     static GLint const fmt(GL_BGRA);
-    #endif
+#   endif
+
+//  fbo_->toImage().save("test.png");
 
     fbo_->bind();
 
