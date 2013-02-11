@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include <QBackingStore>
 
 #include <QCoreApplication>
@@ -6,14 +8,14 @@
 
 //////////////////////////////////////////////////////////////////////////////
 QuickWidget::QuickWidget(QWidget* parent)
-  : QWidget(parent)
+  : QWidget(parent, Qt::FramelessWindowHint)
 {
   init();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 QuickWidget::QuickWidget(QQuickWindow* window, QWidget* parent)
-  : QWidget(parent)
+  : QWidget(parent, Qt::FramelessWindowHint)
 {
   init();
 
@@ -64,8 +66,6 @@ void QuickWidget::init()
 
   setAttribute(Qt::WA_NativeWindow);
   setAttribute(Qt::WA_TranslucentBackground);
-
-  setWindowFlags(Qt::FramelessWindowHint);
 
   setMouseTracking(true);
 }
