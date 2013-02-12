@@ -4,7 +4,7 @@ MOC_DIR = .moc
 OBJECTS_DIR = .obj
 UI_DIR = .ui
 
-CONFIG += debug exceptions rtti stl thread
+CONFIG += exceptions rtti stl thread
 WARNINGS += -Wall
 
 CONFIG += qt
