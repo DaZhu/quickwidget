@@ -66,10 +66,11 @@ void QuickWidget::init()
 {
   window_ = 0;
 
-//setAttribute(Qt::WA_NativeWindow);
   setAttribute(Qt::WA_TranslucentBackground);
 
   setMouseTracking(true);
+
+  winId();
 }
 
 //////////////////////////////////////////////////////////////////////////////
