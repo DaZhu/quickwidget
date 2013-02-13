@@ -13,6 +13,8 @@ int main(int argc, char* argv[])
 
   view->setColor(Qt::transparent);
 
+  view->setResizeMode(QQuickView::SizeViewToRootObject);
+
   view->setSource(QUrl::fromLocalFile(
     QCoreApplication::applicationDirPath() + "/example.qml"));
 
