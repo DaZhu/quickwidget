@@ -37,7 +37,6 @@ void QuickWidget::setWindow(QQuickWindow* window)
 
   if ((window_ = window))
   {
-    winId();
     Q_ASSERT(windowHandle());
 
     window->setParent(windowHandle());
@@ -72,7 +71,7 @@ void QuickWidget::init()
 
   setMouseTracking(true);
 
-//winId();
+  winId();
 }
 
 //////////////////////////////////////////////////////////////////////////////
