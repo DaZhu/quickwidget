@@ -37,7 +37,9 @@ void QuickWidget::setWindow(QQuickWindow* window)
 
   if ((window_ = window))
   {
+    winId();
     Q_ASSERT(windowHandle());
+
     window->setParent(windowHandle());
 
     window->setOpacity(.0);
