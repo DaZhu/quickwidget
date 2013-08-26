@@ -41,6 +41,8 @@ void QuickWidget::setWindow(QQuickWindow* window)
 
     window->setParent(windowHandle());
 
+    window->show();
+
     window->setOpacity(.0);
 
     if (window->size().isEmpty())
@@ -171,13 +173,13 @@ void QuickWidget::afterRendering()
 {
   if (window_ && windowHandle()->isExposed())
   {
-//  fbo_->toImage().save("test.png");
-
 #   ifdef QT_OPENGL_ES
     static GLint const fmt(GL_BGRA_EXT);
 #   else
     static GLint const fmt(GL_BGRA);
 #   endif
+
+    //fbo_->toImage().save("test.png");
 
     fbo_->bind();
 
